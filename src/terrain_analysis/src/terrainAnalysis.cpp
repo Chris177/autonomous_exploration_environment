@@ -222,10 +222,10 @@ int main(int argc, char **argv) {
   nhPrivate.getParam("disRatioZ", disRatioZ);
 
   ros::Subscriber subOdometry =
-      nh.subscribe<nav_msgs::Odometry>("/state_estimation", 5, odometryHandler);
+      nh.subscribe<nav_msgs::Odometry>("/lio_sam/mapping/odometry", 5, odometryHandler);
 
   ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>(
-      "/registered_scan", 5, laserCloudHandler);
+      "/lio_sam/deskew/cloud_deskewed", 5, laserCloudHandler);
 
   ros::Subscriber subJoystick =
       nh.subscribe<sensor_msgs::Joy>("/joy", 5, joystickHandler);
@@ -646,7 +646,7 @@ int main(int argc, char **argv) {
       sensor_msgs::PointCloud2 terrainCloud2;
       pcl::toROSMsg(*terrainCloudElev, terrainCloud2);
       terrainCloud2.header.stamp = ros::Time().fromSec(laserCloudTime);
-      terrainCloud2.header.frame_id = "map";
+      terrainCloud2.header.frame_id = "rhino/base_footprint";
       pubLaserCloud.publish(terrainCloud2);
     }
 
