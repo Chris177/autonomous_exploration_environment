@@ -26,32 +26,59 @@ using namespace std;
 
 const double PI = 3.1415926;
 
-double scanVoxelSize = 0.05;
-double decayTime = 2.0;
-double noDecayDis = 4.0;
-double clearingDis = 8.0;
-bool clearingCloud = false;
-bool useSorting = true;
-double quantileZ = 0.25;
-bool considerDrop = false;
-bool limitGroundLift = false;
-double maxGroundLift = 0.15;
-bool clearDyObs = false;
-double minDyObsDis = 0.3;
-double minDyObsAngle = 0;
-double minDyObsRelZ = -0.5;
-double minDyObsVFOV = -16.0;
-double maxDyObsVFOV = 16.0;
-int minDyObsPointNum = 1;
-bool noDataObstacle = false;
-int noDataBlockSkipNum = 0;
-int minBlockPointNum = 10;
-double vehicleHeight = 1.5;
-int voxelPointUpdateThre = 100;
-double voxelTimeUpdateThre = 2.0;
-double minRelZ = -1.5;
-double maxRelZ = 0.2;
-double disRatioZ = 0.2;
+// double scanVoxelSize = 0.05;
+// double decayTime = 2.0;
+// double noDecayDis = 4.0;
+// double clearingDis = 8.0;
+// bool clearingCloud = false;
+// bool useSorting = true;
+// double quantileZ = 0.25;
+// bool considerDrop = false;
+// bool limitGroundLift = false;
+// double maxGroundLift = 0.15;
+// bool clearDyObs = false;
+// double minDyObsDis = 0.3;
+// double minDyObsAngle = 0;
+// double minDyObsRelZ = -0.5;
+// double minDyObsVFOV = -16.0;
+// double maxDyObsVFOV = 16.0;
+// int minDyObsPointNum = 1;
+// bool noDataObstacle = false;
+// int noDataBlockSkipNum = 0;
+// int minBlockPointNum = 10;
+// double vehicleHeight = 1.5;
+// int voxelPointUpdateThre = 100;
+// double voxelTimeUpdateThre = 2.0;
+// double minRelZ = -1.5;
+// double maxRelZ = 0.2;
+// double disRatioZ = 0.2;
+
+double scanVoxelSize;
+double decayTime;
+double noDecayDis;
+double clearingDis;
+bool clearingCloud;
+bool useSorting;
+double quantileZ;
+bool considerDrop;
+bool limitGroundLift;
+double maxGroundLift;
+bool clearDyObs;
+double minDyObsDis;
+double minDyObsAngle;
+double minDyObsRelZ;
+double minDyObsVFOV;
+double maxDyObsVFOV;
+int minDyObsPointNum;
+bool noDataObstacle;
+int noDataBlockSkipNum;
+int minBlockPointNum;
+double vehicleHeight;
+int voxelPointUpdateThre;
+double voxelTimeUpdateThre;
+double minRelZ;
+double maxRelZ;
+double disRatioZ;
 
 // terrain voxel parameters
 float terrainVoxelSize = 1.0;
@@ -191,7 +218,8 @@ void clearingHandler(const std_msgs::Float32::ConstPtr &dis) {
 }
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "terrainAnalysis");
+  std::string node_name = "terrainAnalysis";
+  ros::init(argc, argv, node_name);
   ros::NodeHandle nh;
   ros::NodeHandle nhPrivate = ros::NodeHandle("~");
 
@@ -221,14 +249,42 @@ int main(int argc, char **argv) {
   nhPrivate.getParam("maxRelZ", maxRelZ);
   nhPrivate.getParam("disRatioZ", disRatioZ);
 
+  std::string sub_Odometry;
+	std::string sub_LaserCloud;
+	std::string terrain_frame_id;
+  std::string sub_Joy;
+
+
+  // Read params from yaml file
+	if(ros::param::get(node_name+"/sub_Odometry",sub_Odometry)==false)
+	{
+		ROS_FATAL("No parameter 'sub_Odometry' specified");
+		ros::shutdown();
+		exit(1);
+	}
+	if(ros::param::get(node_name+"/sub_LaserCloud",sub_LaserCloud)==false)
+	{
+		ROS_FATAL("No parameter 'sub_LaserCloud' specified");
+		ros::shutdown();
+		exit(1);
+	}
+  	if(ros::param::get(node_name+"/terrain_frame_id",terrain_frame_id)==false)
+	{
+		ROS_FATAL("No parameter 'terrain_frame_id' specified");
+		ros::shutdown();
+		exit(1);
+	}
+	
+
   ros::Subscriber subOdometry =
-      nh.subscribe<nav_msgs::Odometry>("/lio_sam/mapping/odometry", 5, odometryHandler);
+      nh.subscribe<nav_msgs::Odometry>(sub_Odometry, 5, odometryHandler);
 
   ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>(
-      "/lio_sam/deskew/cloud_deskewed", 5, laserCloudHandler);
+      sub_LaserCloud, 5, laserCloudHandler);
 
   ros::Subscriber subJoystick =
       nh.subscribe<sensor_msgs::Joy>("/joy", 5, joystickHandler);
+
 
   ros::Subscriber subClearing =
       nh.subscribe<std_msgs::Float32>("/map_clearing", 5, clearingHandler);
@@ -646,7 +702,7 @@ int main(int argc, char **argv) {
       sensor_msgs::PointCloud2 terrainCloud2;
       pcl::toROSMsg(*terrainCloudElev, terrainCloud2);
       terrainCloud2.header.stamp = ros::Time().fromSec(laserCloudTime);
-      terrainCloud2.header.frame_id = "rhino/base_footprint";
+      terrainCloud2.header.frame_id = terrain_frame_id;
       pubLaserCloud.publish(terrainCloud2);
     }
 
