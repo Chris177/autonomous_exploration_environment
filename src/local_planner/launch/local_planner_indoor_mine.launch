@@ -4,10 +4,10 @@
   <arg name="sensorOffsetY" default="0"/>
   <arg name="sensorOffsetZ" default="0.30"/>
   <arg name="cameraOffsetZ" default="0"/>
-  <arg name="twoWayDrive" default="false"/>
-  <arg name="maxSpeed" default="1.1"/> <!--default 0.8  1.1 -->
+  <arg name="twoWayDrive" default="true"/>
+  <arg name="maxSpeed" default="0.8"/>
   <arg name="autonomyMode" default="true"/>
-  <arg name="autonomySpeed" default="0.8"/><!--default 2.0   1.5-->
+  <arg name="autonomySpeed" default="2.0"/>
   <arg name="joyToSpeedDelay" default="2.0"/>
   <arg name="goalX" default="0"/>
   <arg name="goalY" default="0"/>
@@ -35,7 +35,7 @@
     <param name="minRelZ" type="double" value="-1" />
     <param name="maxRelZ" type="double" value="1.5" />
     <param name="maxSpeed" value="$(arg maxSpeed)" />
-    <param name="dirWeight" type="double" value="0.05" /><!-- default 0.02   0.05-->
+    <param name="dirWeight" type="double" value="0.02" />
     <param name="dirThre" type="double" value="90" />
     <param name="dirToVehicle" type="bool" value="true" />
     <param name="pathScale" type="double" value="2.25" />
@@ -60,16 +60,16 @@
     <param name="sensorOffsetY" value="$(arg sensorOffsetY)" />
     <param name="pubSkipNum" type="int" value="1" />
     <param name="twoWayDrive" value="$(arg twoWayDrive)" />
-    <param name="lookAheadDis" type="double" value="2.50" /><!--default 2.0   4-->
-    <param name="yawRateGain" type="double" value="0.30" /><!--default 0.35   0.5  0.4-->
+    <param name="lookAheadDis" type="double" value="2.0" />
+    <param name="yawRateGain" type="double" value="0.350" />
     <param name="stopYawRateGain" type="double" value="5" />
-    <param name="maxYawRate" type="double" value="5.5" /><!--default 5.0   7.0  5.5-->
+    <param name="maxYawRate" type="double" value="5.0" />
     <param name="maxSpeed" value="$(arg maxSpeed)" />
-    <param name="maxAccel" type="double" value="0.55" /><!--default 0.45   0.65  0.55-->
+    <param name="maxAccel" type="double" value="0.45" />
     <param name="switchTimeThre" type="double" value="1.0" />
     <param name="dirDiffThre" type="double" value="0.1" />
-    <param name="stopDisThre" type="double" value="0.25" /><!--default 0.25  0.10  -->
-    <param name="slowDwnDisThre" type="double" value="0.85" /><!--default 0.85  0.10  -->
+    <param name="stopDisThre" type="double" value="0.25" />
+    <param name="slowDwnDisThre" type="double" value="0.85" />
     <param name="useInclRateToSlow" type="bool" value="false" />
     <param name="inclRateThre" type="double" value="120.0" />
     <param name="slowRate1" type="double" value="0.25" />
@@ -78,7 +78,7 @@
     <param name="slowTime2" type="double" value="2.0" />
     <param name="useInclToStop" type="bool" value="false" />
     <param name="inclThre" type="double" value="45.0" />
-    <param name="stopTime" type="double" value="2.0" /><!--default 5   2.0  -->
+    <param name="stopTime" type="double" value="5.0" />
     <param name="noRotAtStop" type="bool" value="true" />
     <param name="noRotAtGoal" type="bool" value="true" />
     <param name="autonomyMode" value="$(arg autonomyMode)" />
