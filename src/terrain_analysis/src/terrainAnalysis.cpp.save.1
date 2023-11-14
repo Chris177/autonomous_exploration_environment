@@ -258,7 +258,7 @@ int main(int argc, char **argv) {
       nh.subscribe<nav_msgs::Odometry>("/lio_sam/mapping/odometry", 5, odometryHandler);
 
   ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>(
-      "/lio_sam/mapping/cloud_registered", 5, laserCloudHandler);
+      "/lio_sam/deskew/cloud_deskewed", 5, laserCloudHandler);
 
   ros::Subscriber subJoystick =
       nh.subscribe<sensor_msgs::Joy>("/joy", 5, joystickHandler);
@@ -600,7 +600,7 @@ int main(int argc, char **argv) {
                 disZ = fabs(disZ);
               int planarPointElevSize =
                   planarPointElev[planarVoxelWidth * indX + indY].size();
-              if (disZ >= 0 && disZ < vehicleHeight &&
+              if (disZ >= 0 && disZ < vehiclemHeight &&
                   planarPointElevSize >= minBlockPointNum) {
                 terrainCloudElev->push_back(point);
                 terrainCloudElev->points[terrainCloudElevSize].intensity = disZ;
@@ -680,7 +680,7 @@ int main(int argc, char **argv) {
       sensor_msgs::PointCloud2 terrainCloud2;
       pcl::toROSMsg(*terrainCloudElev, terrainCloud2);
       terrainCloud2.header.stamp = ros::Time().fromSec(laserCloudTime);
-      terrainCloud2.header.frame_id = "odom";
+      terrainCloud2.header.frame_id = "rhino/base_link";
       pubLaserCloud.publish(terrainCloud2);
     }
 

@@ -1,6 +1,6 @@
 ply
 format ascii 1.0
-element vertex 9
+element vertex 12
 property float x
 property float y
 property float z
